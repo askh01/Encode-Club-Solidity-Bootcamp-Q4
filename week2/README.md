@@ -163,4 +163,22 @@ Error: execution reverted: "Already voted." (action="estimateGas", data="0x08c37
 
 ```
 
+**GetWinningProposals.ts**: This script simply gets the winning proposal number and winnners name:
+
+
+For example:
+
+``` npx ts-node --files scripts/GetWinningProposals.ts 0xb262E381cbb01117D60DfF32C5DbDb4F49C50Af5 ``` 
+
+Output:
+
+```
+Last block number: 4636623
+Last block timestamp: 1699209924 (11/5/2023 10:45:24 AM)
+Using address 0x49F719613Da44fb4EDF69c3f8544C1a4fe75ceE4
+Wallet balance 0.49592309291455694 ETH
+ChairPersonAddress: 0x49F719613Da44fb4EDF69c3f8544C1a4fe75ceE4
+WInning Proposal: 1
+Winner Name:  Proposal_2
+```
 
