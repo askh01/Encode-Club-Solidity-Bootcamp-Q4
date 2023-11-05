@@ -9,7 +9,7 @@ async function main() {
     if (!parameters || parameters.length < 2)
       throw new Error("Parameters not provided");
     const contractAddress = parameters[0];
-    const proposalNUmber = parameters[1];
+    const proposalNumber = parameters[1];
   // configuring the provider
   // const provider = ethers.getDefaultProvider("sepolia");
   const provider = new ethers.JsonRpcProvider(process.env.INFURA_API_KEY ?? "");
@@ -28,12 +28,35 @@ async function main() {
   if (balance < 0.01) {
     throw new Error("Not enough ether");
   }
+
   //Attach smart contract using Typechains
 const ballotFactory = new Ballot__factory(wallet);
 const ballotContract = await ballotFactory.attach(contractAddress) as Ballot;
-const tx = await ballotContract.vote(proposalNUmber);
+
+//get chariperson address
+
+const chairPersonAddress = await ballotContract.chairperson();
+console.log("ChairPersonAddress: "+chairPersonAddress);
+
+//Proposal name and vote count before voting
+const proposalBeforeVote = await ballotContract.proposals(proposalNumber)
+console.log(`ProposalName before vote: " ${ethers.decodeBytes32String(proposalBeforeVote.name)}`);
+
+console.log("Vote count before vote: "+ proposalBeforeVote.voteCount);
+
+
+//Caste vote
+const tx = await ballotContract.vote(proposalNumber);
 const receipt = await tx.wait();
 console.log(`Transaction completed ${receipt?.hash}`)
+
+
+//Proposal name  and vote count after voting
+const proposalAfterVote = await ballotContract.proposals(proposalNumber)
+console.log(`ProposalName after vote: " ${ethers.decodeBytes32String(proposalAfterVote.name)}`);
+
+console.log("Vote count after vote: "+ proposalBeforeVote.voteCount);
+
 }
 
 main().catch((error) => {
