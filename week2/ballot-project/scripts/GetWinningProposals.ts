@@ -2,14 +2,12 @@ import { ethers } from "hardhat";
 import * as dotenv from 'dotenv';
 import { Ballot, Ballot__factory } from "../typechain-types";
 dotenv.config();
-const PROPOSALS = ["Proposal 1", "Proposal 2", "Proposal 3"];
 
 async function main() {
     const parameters = process.argv.slice(2);
-    if (!parameters || parameters.length < 2)
+    if (!parameters || parameters.length < 1)
       throw new Error("Parameters not provided");
     const contractAddress = parameters[0];
-    const proposalNumber = parameters[1];
   // configuring the provider
   // const provider = ethers.getDefaultProvider("sepolia");
   const provider = new ethers.JsonRpcProvider(process.env.INFURA_API_KEY ?? "");
@@ -38,24 +36,13 @@ const ballotContract = await ballotFactory.attach(contractAddress) as Ballot;
 const chairPersonAddress = await ballotContract.chairperson();
 console.log("ChairPersonAddress: "+chairPersonAddress);
 
-//Proposal name and vote count before voting
-const proposalBeforeVote = await ballotContract.proposals(proposalNumber)
-console.log(`ProposalName before vote: " ${ethers.decodeBytes32String(proposalBeforeVote.name)}`);
+//get winning proposal and winner name
 
-console.log("Vote count before vote: "+ proposalBeforeVote.voteCount);
+const winningProposal = await ballotContract.winningProposal();
+console.log("WInning Proposal: "+winningProposal);
 
-
-//Caste vote
-const tx = await ballotContract.vote(proposalNumber);
-const receipt = await tx.wait();
-console.log(`Transaction completed ${receipt?.hash}`)
-
-
-//Proposal name  and vote count after voting
-const proposalAfterVote = await ballotContract.proposals(proposalNumber)
-console.log(`ProposalName after vote: " ${ethers.decodeBytes32String(proposalAfterVote.name)}`);
-
-console.log("Vote count after vote: "+ proposalBeforeVote.voteCount);
+const winnerName = await ballotContract.winnerName();
+console.log(`Winner Name:  ${ethers.decodeBytes32String(winnerName)}`);
 
 }
 
